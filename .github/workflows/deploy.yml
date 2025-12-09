@@ -1,0 +1,41 @@
+name: Deploy Backend to Render via GHCR
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/dogmatch-backend:latest
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 🔐 Login a GitHub Container Registry (GHCR)
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # 🧱 Build de la imagen Docker
+      - name: Build Docker image
+        run: |
+          docker build -t $IMAGE_NAME .
+
+      # ⬆️ Push de la imagen a GHCR
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE_NAME
+
+      # 🚀 Disparar el deploy automático en Render
+      - name: Trigger Render deploy
+        run: |
+          curl "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
