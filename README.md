@@ -142,5 +142,5 @@ dogmatch-backend/
 
 ---
 
-This README describes the first-partial backend scope. Update it as features move from planning to implementation.
 Prueba de CI/CD.
+Actualización realizada para pruebas de funcionamiento del CI/CD - Ordinario de Infraestructura.
